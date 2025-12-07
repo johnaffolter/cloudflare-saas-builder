@@ -18,6 +18,17 @@ Supermemory now has 20k+ users and it runs on $5/month. safe to say, it's _very_
 - [Cloudflare Pages](https://pages.cloudflare.com/) for hosting
 - [ShadcnUI](https://shadcn.com/) as the component library
 
+## Database Schema Naming Conventions
+
+This project follows industry-standard **snake_case** naming conventions for database columns and tables, ensuring compatibility with popular data platforms:
+
+- **Apache Hive**: Aligned with Hive's preference for snake_case identifiers
+- **Hasura**: Compatible with PostgreSQL/Hasura GraphQL naming standards
+- **Snowflake**: Follows Snowflake's SQL naming conventions
+- **Neo4j**: Consistent with Neo4j property naming best practices
+
+While the database uses snake_case (e.g., `user_id`, `email_verified`), the TypeScript/JavaScript code maintains camelCase property names (e.g., `userId`, `emailVerified`) through Drizzle ORM's mapping layer, providing the best of both worlds.
+
 ## Getting Started
 
 1. Make sure that you have [Wrangler](https://developers.cloudflare.com/workers/wrangler/install-and-update/#installupdate-wrangler) installed. And also that you have logged in with `wrangler login` (You'll need a Cloudflare account)
