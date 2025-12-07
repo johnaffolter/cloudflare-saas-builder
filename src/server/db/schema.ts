@@ -11,6 +11,7 @@ export const users = sqliteTable("user", {
   email: text("email").unique(),
   emailVerified: integer("emailVerified", { mode: "timestamp_ms" }),
   image: text("image"),
+  role: text("role").default("user"), // user, admin, super_admin
 })
  
 export const accounts = sqliteTable(
@@ -81,3 +82,24 @@ export const authenticators = sqliteTable(
     }),
   })
 )
+
+export const views = sqliteTable("view", {
+  id: text("id")
+    .primaryKey()
+    .$defaultFn(() => crypto.randomUUID()),
+  name: text("name").notNull(), // e.g., vw_daily_sales
+  displayName: text("displayName").notNull(), // e.g., Daily Sales Summary
+  description: text("description"), // What this view provides...
+  sqlDefinition: text("sqlDefinition").notNull(), // The SQL query
+  semanticMetadata: text("semanticMetadata"), // JSON: {identifiers: [...], metrics: [...], attributes: [...]}
+  status: text("status").default("draft"), // draft, testing, deployed
+  createdBy: text("createdBy")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  createdAt: integer("createdAt", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+  updatedAt: integer("updatedAt", { mode: "timestamp_ms" })
+    .notNull()
+    .$defaultFn(() => new Date()),
+})

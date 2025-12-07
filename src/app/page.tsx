@@ -4,6 +4,7 @@ import { auth, signIn, signOut } from "@/server/auth";
 import { db } from "@/server/db";
 import { users } from "@/server/db/schema";
 import { getThemeToggler } from "@/lib/theme/get-theme-button";
+import Link from "next/link";
 
 export const runtime = "edge";
 
@@ -93,14 +94,19 @@ export default async function Page() {
 							<span>Hello {session.user.name} 👋</span>
 							<span>{session.user.email}</span>
 						</div>
-						<form
-							action={async () => {
-								"use server";
-								await signOut();
-							}}
-						>
-							<Button className="mt-4">Sign out</Button>
-						</form>
+						<div className="mt-4 flex gap-2">
+							<Link href="/views">
+								<Button variant="outline">View Management</Button>
+							</Link>
+							<form
+								action={async () => {
+									"use server";
+									await signOut();
+								}}
+							>
+								<Button>Sign out</Button>
+							</form>
+						</div>
 					</>
 				) : (
 					<form
