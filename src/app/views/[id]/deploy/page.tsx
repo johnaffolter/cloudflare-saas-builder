@@ -22,12 +22,11 @@ export default function DeployPage() {
 
   useEffect(() => {
     // Fetch view data
-    fetch(`/api/views`)
+    fetch(`/api/views/${params.id}`)
       .then((res) => res.json())
       .then((data) => {
-        const typedData = data as { views?: any[] };
-        const view = typedData.views?.find((v: any) => v.id === params.id);
-        setViewData(view);
+        const typedData = data as { view?: any };
+        setViewData(typedData.view);
         setIsLoading(false);
       })
       .catch((err) => {

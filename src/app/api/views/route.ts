@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import { views } from "@/server/db/schema";
+import { views, users } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export const runtime = "edge";
@@ -34,18 +34,21 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  // Check if user is super admin (basic implementation)
-  // In production, you'd want to check the user's role from the database
-  const userRole = "super_admin"; // TODO: Fetch from database
-
-  if (userRole !== "super_admin") {
-    return NextResponse.json(
-      { error: "Only super admins can create views" },
-      { status: 403 }
-    );
-  }
-
   try {
+    // Check if user is super admin
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, session.user.id))
+      .limit(1);
+
+    if (!user || user.length === 0 || user[0].role !== "super_admin") {
+      return NextResponse.json(
+        { error: "Only super admins can create views" },
+        { status: 403 }
+      );
+    }
+
     const body = await request.json() as {
       name: string;
       displayName: string;

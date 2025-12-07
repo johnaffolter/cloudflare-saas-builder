@@ -1,10 +1,11 @@
 import { auth } from "@/server/auth";
 import { db } from "@/server/db";
-import { views } from "@/server/db/schema";
+import { views, users } from "@/server/db/schema";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { eq } from "drizzle-orm";
 
 export const runtime = "edge";
 
@@ -15,8 +16,14 @@ export default async function ViewsPage() {
     redirect("/");
   }
 
-  // TODO: Check user role from database
-  const userRole = "super_admin"; // For now, hardcoded
+  // Check user role from database
+  const user = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, session.user.id))
+    .limit(1);
+
+  const userRole = user && user.length > 0 ? user[0].role : "user";
 
   if (userRole !== "super_admin") {
     return (
